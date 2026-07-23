@@ -9,6 +9,11 @@ const envSchema = z.object({
     PORT : z.coerce.number().default(3000),
     HOST : z.string().default("0.0.0.0"),
     LOG_LEVEL : z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
+    DB_HOST: z.string().min(1),
+    DB_PORT: z.coerce.number().default(5432),
+    DB_USER: z.string().min(1),
+    DB_PASSWORD: z.string().min(1),
+    DB_NAME: z.string().min(1),
 })
 const _env = envSchema.safeParse(process.env);
 
