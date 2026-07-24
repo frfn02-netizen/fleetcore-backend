@@ -1,5 +1,6 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import { logger } from '@/infrastructure/logger/logger';
+import { userRoutes } from '@/presentation/http/routes/user-routes';
 import { authRoutes } from '@/presentation/http/routes/auth-routes';
 
 export const buildServer = (): FastifyInstance => {
@@ -14,6 +15,7 @@ export const buildServer = (): FastifyInstance => {
 
   // Register API Routes
   server.register(authRoutes);
+  server.register(userRoutes)
 
   return server;
 };

@@ -1,6 +1,6 @@
 // Bentuk data asli dari database
 export interface User {
-  id: string; // UUID adalah string di TypeScript
+  id: string; 
   email: string;
   password_hash: string;
   role_id: number;
