@@ -15,9 +15,9 @@ export const buildServer = () => {
   });
 
   // Register API Routes
-  server.register(authRoutes)
-  server.register(userRoutes)
-  server.register(vehicleRoutes)
+  server.register(authRoutes);
+  server.register(userRoutes);
+  server.register(vehicleRoutes);
 
   return server;
 };
