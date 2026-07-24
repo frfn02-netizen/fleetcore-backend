@@ -1,28 +1,22 @@
 import { Server as SocketIOServer } from 'socket.io';
 import { FastifyInstance } from 'fastify';
 import { logger } from '@/infrastructure/logger/logger';
+import { setupSocketHandlers } from '@/presentation/websocket/socket-handler'; // <-- 1. Import ini
 
 let io: SocketIOServer;
 
 export const initializeWebSocket = (fastify: FastifyInstance): void => {
-  // socket.io harus di-attach ke native HTTP server milik Fastify
   io = new SocketIOServer(fastify.server, {
     cors: {
-      origin: '*', // Untuk development. Di production harus spesifik.
+      origin: '*', 
       methods: ['GET', 'POST'],
     },
   });
 
-  io.on('connection', (socket) => {
-    logger.info(`🔌 Client connected to WebSocket: ${socket.id}`);
+  // 2. Panggil fungsi penyetel handler dan middleware
+  setupSocketHandlers(io);
 
-    // Contoh listener saat client disconnect
-    socket.on('disconnect', () => {
-      logger.info(`🔌 Client disconnected: ${socket.id}`);
-    });
-  });
-
-  logger.info('✅ WebSocket Server Initialized');
+  logger.info('✅ WebSocket Server Initialized & Handlers Attached');
 };
 
 export const getIO = (): SocketIOServer => {
