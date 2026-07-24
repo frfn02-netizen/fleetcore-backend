@@ -4,7 +4,7 @@ import { authRoutes } from '@/presentation/http/routes/auth-routes';
 
 export const buildServer = (): FastifyInstance => {
   const server = Fastify({
-    logger: logger, 
+    loggerInstance: logger, 
   });
 
   // Health check endpoint
