@@ -1,16 +1,19 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import { logger } from '@/infrastructure/logger/logger';
+import { authRoutes } from '@/presentation/http/routes/auth-routes';
 
 export const buildServer = (): FastifyInstance => {
   const server = Fastify({
-    loggerInstance: logger, // Inject our Pino logger
-    // disableRequestLogging: true, // We will create custom request logging later to avoid noise
+    logger: logger, 
   });
 
   // Health check endpoint
-  server.get('/health', async (request, reply) => {
+  server.get('/health', async () => {
     return { status: 'OK', timestamp: new Date().toISOString() };
   });
+
+  // Register API Routes
+  server.register(authRoutes);
 
   return server;
 };
