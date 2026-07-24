@@ -3,22 +3,21 @@ import { z } from 'zod';
 import { AuthService } from '@/application/services/auth-service';
 import { PostgresUserRepository } from '@/infrastructure/repositories/user-repository';
 
-// Schema validasi input dari client menggunakan Zod
-const registerSchema = z.object({
+// ... (registerSchema tetap biarkan) ...
+
+const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  role_id: z.number().int().positive(),
+  password: z.string().min(1, 'Password is required'), // Saat login, kita tidak perlu memvalidasi minimal 8 karakter, cukup pastikan tidak kosong
 });
 
 export const authRoutes: FastifyPluginAsync = async (server: FastifyInstance) => {
-  // Manual Dependency Injection Wiring
   const userRepository = new PostgresUserRepository();
   const authService = new AuthService(userRepository);
 
-  server.post('/api/auth/register', async (request, reply) => {
+
+  server.post('/api/auth/login', async (request, reply) => {
     try {
-      // 1. Validasi Input HTTP Body
-      const parsedBody = registerSchema.safeParse(request.body);
+      const parsedBody = loginSchema.safeParse(request.body);
       
       if (!parsedBody.success) {
         return reply.status(400).send({
@@ -28,28 +27,25 @@ export const authRoutes: FastifyPluginAsync = async (server: FastifyInstance) =>
         });
       }
 
-      const { email, password, role_id } = parsedBody.data;
+      const { email, password } = parsedBody.data;
 
-      // 2. Eksekusi Business Logic
-      const user = await authService.register(email, password, role_id);
+      // Panggil Service Login
+      const result = await authService.login(email, password);
 
-      // 3. Kembalikan Response Berhasil
-      return reply.status(201).send({
+      return reply.status(200).send({
         success: true,
-        message: 'User registered successfully',
-        data: user,
+        message: 'Login successful',
+        data: result,
       });
 
     } catch (error: any) {
-      // Tangkap error dari Service (misal: Email sudah ada)
-      if (error.message === 'Email is already registered') {
-        return reply.status(409).send({
+      if (error.message === 'Invalid email or password') {
+        return reply.status(401).send({
           success: false,
           message: error.message,
         });
       }
 
-      // Log error internal server yang tidak terduga
       server.log.error(error);
       return reply.status(500).send({
         success: false,

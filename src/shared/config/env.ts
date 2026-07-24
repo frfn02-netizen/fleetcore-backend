@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import { debug } from "node:console";
-import { z } from "zod";
+import { jwt, z } from "zod";
 
 config();
 
@@ -14,6 +14,7 @@ const envSchema = z.object({
     DB_USER: z.string().min(1),
     DB_PASSWORD: z.string().min(1),
     DB_NAME: z.string().min(1),
+    JWT_SECRET: z.string().min(10)
 })
 const _env = envSchema.safeParse(process.env);
 
