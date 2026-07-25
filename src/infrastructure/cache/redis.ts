@@ -16,9 +16,9 @@ redisClient.on('error', (err) => {
 export const connectRedis = async (): Promise<void> => {
   try {
     await redisClient.connect();
-    logger.info('✅ Redis Connected');
+    logger.info('Redis Connected');
   } catch (err) {
-    logger.error('❌ Failed to connect to Redis');
-    process.exit(1); // Fail fast jika cache engine mati
+    logger.error('Failed to connect to Redis');
+    process.exit(1); 
   }
 };

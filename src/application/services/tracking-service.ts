@@ -1,27 +1,27 @@
 import { redisClient } from '@/infrastructure/cache/redis';
 import { logger } from '@/infrastructure/logger/logger';
+import { PostgresTrackingRepository } from '@/infrastructure/repositories/tracking-repository';
 
 export class TrackingService {
   
   // Menggunakan tipe data bawaan Redis untuk Geospatial
   private readonly GEO_KEY = 'fleet_locations';
+  private trackingRepository: PostgresTrackingRepository;
+
+  constructor() {
+    this.trackingRepository = new PostgresTrackingRepository();
+  }
 
   async updateVehicleLocation(vehicleId: string, latitude: number, longitude: number): Promise<void> {
     try {
-      // Redis GEOADD format: GEOADD key longitude latitude member
-      // Perhatikan urutannya: Longitude dulu, baru Latitude. Ini standar GeoJSON.
-      await redisClient.geoadd(this.GEO_KEY, longitude, latitude, vehicleId);
 
-  
-      
-      // Kita juga simpan timestamp terakhir kendaraan tersebut update
-      // HSET: Hash Set (menyimpan key-value di dalam key utama)
+      await redisClient.geoadd(this.GEO_KEY, longitude, latitude, vehicleId);
       await redisClient.hset('fleet_last_update', vehicleId, Date.now());
+      await this.trackingRepository.saveHistory(vehicleId, longitude, latitude);
       
     } catch (error) {
       logger.error({ err: error, vehicleId }, 'Failed to update vehicle location in Redis');
-      // Di sistem production, error ini biasanya dilempar ke sistem antrean (Dead Letter Queue)
-      // Untuk sekarang, kita log saja agar tidak mematikan koneksi websocket.
+      throw new Error('Failed to update vehicle location');
     }
   }
   // Mencari kendaraan dalam radius kilometer tertentu dari titik koordinat pusat

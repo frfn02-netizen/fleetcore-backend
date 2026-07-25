@@ -1,8 +1,8 @@
 import { io } from 'socket.io-client';
 
 // GANTI DENGAN DATA ASLIMU!
-const DRIVER_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4MzM2MGFjMC1iNzc1LTRiMDEtYjcwOC02ZjJmYzIzNWFlZmEiLCJyb2xlSWQiOjMsImlhdCI6MTc4NDg3Njk3OSwiZXhwIjoxNzg0OTYzMzc5fQ._3uTTaWm9kW28Jx2nlT39RC2xMcn2M1JiNo-w_Vt9So'; 
-const VEHICLE_ID = 'c114ff1b-b79f-49d3-9d66-bdff31c1e134'; 
+const VEHICLE_ID = 'c114ff1b-b79f-49d3-9d66-bdff31c1e134';
+const DRIVER_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4MzM2MGFjMC1iNzc1LTRiMDEtYjcwOC02ZjJmYzIzNWFlZmEiLCJyb2xlSWQiOjMsImlhdCI6MTc4NDk4NDU3MSwiZXhwIjoxNzg1MDcwOTcxfQ.tClvsAs9wS1F6eC6CnTq7DOPKu2jJWAvlhu_Eq4HalM'
 
 const socket = io('http://localhost:3000', {
   auth: {
