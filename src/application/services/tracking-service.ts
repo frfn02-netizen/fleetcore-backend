@@ -1,5 +1,6 @@
 import { redisClient } from '@/infrastructure/cache/redis';
 import { logger } from '@/infrastructure/logger/logger';
+import { PostgresGeofenceRepository } from '@/infrastructure/repositories/geofence-repository';
 import { PostgresTrackingRepository } from '@/infrastructure/repositories/tracking-repository';
 
 export class TrackingService {
@@ -7,17 +8,24 @@ export class TrackingService {
   // Menggunakan tipe data bawaan Redis untuk Geospatial
   private readonly GEO_KEY = 'fleet_locations';
   private trackingRepository: PostgresTrackingRepository;
+  private geofenceRepository: PostgresGeofenceRepository; 
 
   constructor() {
     this.trackingRepository = new PostgresTrackingRepository();
+    this.geofenceRepository = new PostgresGeofenceRepository();
   }
-
   async updateVehicleLocation(vehicleId: string, latitude: number, longitude: number): Promise<void> {
     try {
-
+      const isOut = await this.geofenceRepository.isOutOfBounds(latitude, longitude);
       await redisClient.geoadd(this.GEO_KEY, longitude, latitude, vehicleId);
-      await redisClient.hset('fleet_last_update', vehicleId, Date.now());
       await this.trackingRepository.saveHistory(vehicleId, longitude, latitude);
+
+      if (isOut){
+        logger.warn(
+          { vehicleId, latitude, longitude},
+          "🚨 GEOFENCE BREACH: Kendaraan terdeteksi keluar dari area operasional resmi!"
+        )
+      }
       
     } catch (error) {
       logger.error({ err: error, vehicleId }, 'Failed to update vehicle location in Redis');
@@ -27,8 +35,7 @@ export class TrackingService {
   // Mencari kendaraan dalam radius kilometer tertentu dari titik koordinat pusat
   async getNearbyVehicles(longitude: number, latitude: number, radiusKm: number): Promise<any[]> {
     try {
-      // Menggunakan GEOSEARCH untuk mencari member dalam radius (unit: km)
-      // Format: GEOSEARCH key FROMLONLAT lng lat BYRADIUS radius km WITHCOORD WITHDIST
+  
       const results = await redisClient.geosearch(
         this.GEO_KEY,
         'FROMLONLAT',

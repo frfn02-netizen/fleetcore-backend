@@ -2,8 +2,7 @@ import { io } from 'socket.io-client';
 
 // GANTI DENGAN DATA ASLIMU!
 const VEHICLE_ID = 'c114ff1b-b79f-49d3-9d66-bdff31c1e134';
-const DRIVER_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4MzM2MGFjMC1iNzc1LTRiMDEtYjcwOC02ZjJmYzIzNWFlZmEiLCJyb2xlSWQiOjMsImlhdCI6MTc4NDk4NDU3MSwiZXhwIjoxNzg1MDcwOTcxfQ.tClvsAs9wS1F6eC6CnTq7DOPKu2jJWAvlhu_Eq4HalM'
-
+const DRIVER_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4MzM2MGFjMC1iNzc1LTRiMDEtYjcwOC02ZjJmYzIzNWFlZmEiLCJyb2xlSWQiOjMsImlhdCI6MTc4NTEyMzg3OSwiZXhwIjoxNzg1MjEwMjc5fQ.voNxWu53kyoMyKMdvdrxmviN9ln3pEM4m3YdsYHcjhc'
 const socket = io('http://localhost:3000', {
   auth: {
     token: DRIVER_TOKEN,
@@ -14,9 +13,8 @@ socket.on('connect', () => {
   console.log(`✅ Simulator terhubung ke server dengan ID: ${socket.id}`);
   console.log('🚚 Memulai simulasi perjalanan truk...');
 
-  // Koordinat awal (Misal: Monas, Jakarta)
-  let currentLat = -6.175392;
-  let currentLng = 106.827153;
+ let currentLat = -6.200000; 
+ let currentLng = 106.822000;
 
   // Tembakkan koordinat setiap 2 detik
   setInterval(() => {
