@@ -55,4 +55,13 @@ export class TrackingService {
       throw new Error('Failed to retrieve fleet locations');
     }
   }
+  async getVehicleHistory(vehicleId: string, startTime: string, endTime: string): Promise<any[]> {
+    try {
+      const history = await this.trackingRepository.getHistory(vehicleId, startTime, endTime);
+      return history;
+    } catch (error) {
+      logger.error({ err: error, vehicleId }, 'Failed to fetch vehicle tracking history');
+      throw new Error('Failed to retrieve vehicle tracking history');
+    }
+  }
 }
