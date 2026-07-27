@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 // GANTI DENGAN DATA ASLIMU!
 const VEHICLE_ID = 'c114ff1b-b79f-49d3-9d66-bdff31c1e134';
 const DRIVER_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4MzM2MGFjMC1iNzc1LTRiMDEtYjcwOC02ZjJmYzIzNWFlZmEiLCJyb2xlSWQiOjMsImlhdCI6MTc4NTEyMzg3OSwiZXhwIjoxNzg1MjEwMjc5fQ.voNxWu53kyoMyKMdvdrxmviN9ln3pEM4m3YdsYHcjhc'
-const socket = io('http://localhost:3000', {
+const socket = io('http://localhost:3001', {
   auth: {
     token: DRIVER_TOKEN,
   },

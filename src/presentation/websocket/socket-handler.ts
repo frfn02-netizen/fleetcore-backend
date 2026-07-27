@@ -38,7 +38,7 @@ export const setupSocketHandlers = (io: Server) => {
     const userId = socket.data.user.userId;
     logger.info(`🚚 Driver connected to tracking engine. UserID: ${userId}, SocketID: ${socket.id}`);
 
-    // Mendengarkan event 'update_location' dari aplikasi supir
+   // Mendengarkan event 'update_location' dari aplikasi supir
     socket.on('update_location', async (data: { vehicleId: string; lat: number; lng: number }) => {
       // Validasi struktur data mentah (fail-safe)
       if (!data || typeof data.lat !== 'number' || typeof data.lng !== 'number' || !data.vehicleId) {
@@ -46,13 +46,21 @@ export const setupSocketHandlers = (io: Server) => {
         return; 
       }
 
-      // Eksekusi business logic (Simpan ke Redis)
+      // Eksekusi business logic (Simpan ke Redis/DB)
       await trackingService.updateVehicleLocation(data.vehicleId, data.lat, data.lng);
       
-      // Opsional: Log untuk mode development agar kita tahu data masuk
-      logger.debug(`📍 Location updated | Vehicle: ${data.vehicleId} | Lat: ${data.lat}, Lng: ${data.lng}`);
-    });
+      // ==========================================
+      // INI KUNCI UTAMA YANG KURANG:
+      // Siarkan koordinat terbaru ke seluruh frontend dashboard yang terhubung!
+      // ==========================================
+      io.emit('location_update', {
+        vehicleId: data.vehicleId,
+        lat: data.lat,
+        lng: data.lng
+      });
 
+      logger.debug(`📍 Location updated & broadcasted | Vehicle: ${data.vehicleId} | Lat: ${data.lat}, Lng: ${data.lng}`);
+    });
     socket.on('disconnect', () => {
       logger.info(`🚚 Driver disconnected. UserID: ${userId}`);
     });
